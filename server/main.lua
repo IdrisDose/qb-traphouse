@@ -73,7 +73,7 @@ end)
 function SellTimeout(traphouseId, slot, itemName, amount, info)
     Citizen.CreateThread(function()
         if itemName == "markedbills" then
-            SetTimeout(math.random(3000, 5000), function()
+            SetTimeout(math.random(20000, 40000), function()
                 if Config.TrapHouses[traphouseId].inventory[slot] ~= nil then
                     RemoveHouseItem(traphouseId, slot, itemName, 1)
                     --Config.TrapHouses[traphouseId].money = Config.TrapHouses[traphouseId].money + math.ceil(info.worth / 100 * 80)
