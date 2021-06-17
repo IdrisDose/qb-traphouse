@@ -256,7 +256,7 @@ Citizen.CreateThread(function()
                             }, {}, {}, function() -- Done
                                 StopAnimTask(GetPlayerPed(-1), "mp_car_bomb", "car_bomb_mechanic", 1.0)
                             local TraphouseInventory = {}
-                            TraphouseInventory.label = "placeholder-"..CurrentTraphouse
+                            TraphouseInventory.label = "Laptop-"..CurrentTraphouse
                             TraphouseInventory.items = data.inventory
                             TraphouseInventory.slots = 10
                             TraphouseInventory.maxweight = 100000
