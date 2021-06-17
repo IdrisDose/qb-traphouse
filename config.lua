@@ -1,5 +1,11 @@
 Config = Config or {}
 
+
+--      0 is no marker only text command
+--      1 is marker
+
+Config.Marker = 1
+
 -- You can create more "traphouses" however I havent testing this
 
 Config.TrapHouses = {
@@ -7,7 +13,7 @@ Config.TrapHouses = {
         coords = {
             ["enter"]  =  {x = 636.48968505859, y = 2785.7883300781, z = 42.00, h = 295.5, r = 1.0},
             ["washer"] = {x = 1122.472, y = -3194.49, z = -40.38, h = 264.5, r = 1.0},
-            ["laptop"] =   {x = 1129.64, y = -3194.223, z = -40.39, h = 264.5, r = 1.0},
+            ["laptop"] =   {x = 1129.50, y = -3193.60, z = -40.65, h = 264.5, r = 1.0},
         },
         pincode = 1111,
         inventory = {},

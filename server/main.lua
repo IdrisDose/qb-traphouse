@@ -53,6 +53,14 @@ QBCore.Commands.Add("enterwash", "Enters", {}, false, function(source, args)
     TriggerClientEvent('qb-traphouse:client:EnterTraphouse', src)
 end)
 
+RegisterServerEvent('qb-traphouse:server:Enter')
+AddEventHandler('qb-traphouse:server:Enter', function()
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+ 
+    TriggerClientEvent('qb-traphouse:client:EnterTraphouse', src)
+end)
+
 RegisterServerEvent('qb-traphouse:server:TakeMoney')
 AddEventHandler('qb-traphouse:server:TakeMoney', function(TraphouseId)
     local src = source

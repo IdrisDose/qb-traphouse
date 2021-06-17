@@ -196,6 +196,12 @@ Citizen.CreateThread(function()
                     inRange = true
                     if EnterDistance < 1 then
                         InTraphouseRange = true
+                    elseif  EnterDistance < 1.7 and Config.Marker == 1 then
+                        DrawText3Ds(data.coords["enter"].x, data.coords["enter"].y, data.coords["enter"].z, '~b~E~w~ - Enter')
+                        InTraphouseRange = true
+                        if IsControlJustPressed(0, 38) then
+                            TriggerServerEvent('qb-traphouse:server:Enter')
+                        end
                     else
                         if InTraphouseRange then
                             InTraphouseRange = false
