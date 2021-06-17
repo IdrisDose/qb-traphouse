@@ -85,26 +85,16 @@ AddEventHandler('qb-traphouse:client:EnterTraphouse', function(code)
     if ClosestTraphouse ~= nil then
         if InTraphouseRange then
             local data = Config.TrapHouses[ClosestTraphouse]
-            if not IsKeyHolder then
-                SendNUIMessage({
-                    action = "open"
-                })
-                SetNuiFocus(true, true)
-            else
-                EnterTraphouse()
-                CurrentTraphouse = ClosestTraphouse
-                InsideTraphouse = true
-            end
+            SendNUIMessage({
+                action = "open"
+            })
+            SetNuiFocus(true, true)
         end
     end
 end)
 
 RegisterNUICallback('PinpadClose', function()
     SetNuiFocus(false, false)
-end)
-
-RegisterNUICallback('ErrorMessage', function(data)
-    QBCore.Functions.Notify(data.message, 'error')
 end)
 
 RegisterNUICallback('EnterPincode', function(d)
@@ -144,9 +134,11 @@ Citizen.CreateThread(function()
                 if InteractDistance < 20 then
                     inRange = true
                     if InteractDistance < 1 then
+
+                    -- I know the code looks fucking horrible but it works... idk how... but it does
+
                         if data.money == 0 then
                             DrawText3Ds(data.coords["washer"].x, data.coords["washer"].y, data.coords["washer"].z + 0.2, '~b~H~w~ - Open Washer')
-                            --DrawText3Ds(data.coords["washer"].x, data.coords["washer"].y, data.coords["washer"].z, '~r~ Cash: Empty')
                         end
                         if data.money == 2 then
                             DrawText3Ds(data.coords["washer"].x, data.coords["washer"].y, data.coords["washer"].z + 0.1, '~b~ Washing...')
@@ -230,18 +222,18 @@ Citizen.CreateThread(function()
             local data = Config.TrapHouses[ClosestTraphouse]
             if InsideTraphouse then
                 local ExitDistance = #(pos - vector3(1138.119, -3199.49, -39.66))
-                local InteractDistance = #(pos - vector3(data.coords["sell"].x, data.coords["sell"].y, data.coords["sell"].z))
+                local InteractDistance = #(pos - vector3(data.coords["laptop"].x, data.coords["laptop"].y, data.coords["laptop"].z))
                 if InteractDistance < 20 then
                     inRange = true
                     if InteractDistance < 1 then
                         if data.laptopmoney == 0 then
-                            DrawText3Ds(data.coords["sell"].x, data.coords["sell"].y, data.coords["sell"].z + 0.2, '~b~H~w~ - Open Laptop')
+                            DrawText3Ds(data.coords["laptop"].x, data.coords["laptop"].y, data.coords["laptop"].z + 0.2, '~b~H~w~ - Open Laptop')
                         end
                         if data.laptopmoney == 2 then
-                            DrawText3Ds(data.coords["sell"].x, data.coords["sell"].y, data.coords["sell"].z + 0.1, '~r~ Looking for buyer...')
+                            DrawText3Ds(data.coords["laptop"].x, data.coords["laptop"].y, data.coords["laptop"].z + 0.1, '~r~ Looking for buyer...')
                         end
                         if data.laptopmoney > 3 then 
-                            DrawText3Ds(data.coords["sell"].x, data.coords["sell"].y, data.coords["sell"].z, '~b~E~w~ - Transfer Cash to Bank (~g~$'..data.laptopmoney..'~w~)')
+                            DrawText3Ds(data.coords["laptop"].x, data.coords["laptop"].y, data.coords["laptop"].z, '~b~E~w~ - Transfer Cash to Bank (~g~$'..data.laptopmoney..'~w~)')
                         end
                         if IsControlJustPressed(0,74) then
                             QBCore.Functions.Progressbar("laptop_open", "opening laptop", math.random(2000, 3000), false, true, {
@@ -298,18 +290,19 @@ end)
 
 function EnterTraphouse()
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
-    DoScreenFadeOut(1000)
-    SetEntityCoords(PlayerPedId(), 1138.129, -3199.196, -39.66, true, true, true, false)
-    DoScreenFadeIn(1000)
-    CurrentTraphouse = ClosestTraphouse
-    InsideTraphouse = true
-    SetRainLevel(0.0)
-    TriggerEvent('qb-weathersync:client:DisableSync')
-    print('Entered')
-    SetWeatherTypePersist('EXTRASUNNY')
-    SetWeatherTypeNow('EXTRASUNNY')
-    SetWeatherTypeNowPersist('EXTRASUNNY')
-    NetworkOverrideClockTime(23, 0, 0)
+    DoScreenFadeOut(250)
+    Citizen.Wait(250)
+        SetEntityCoords(PlayerPedId(), 1138.129, -3199.196, -39.66, true, true, true, false)
+        DoScreenFadeIn(250)
+        CurrentTraphouse = ClosestTraphouse
+        InsideTraphouse = true
+        --SetRainLevel(0.0)
+        TriggerEvent('qb-weathersync:client:DisableSync')
+        print('Entered')
+        SetWeatherTypePersist('EXTRASUNNY')
+        SetWeatherTypeNow('EXTRASUNNY')
+        SetWeatherTypeNowPersist('EXTRASUNNY')
+        NetworkOverrideClockTime(23, 0, 0)
 end
 
 function LeaveTraphouse(data)
