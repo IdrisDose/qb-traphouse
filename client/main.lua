@@ -12,10 +12,9 @@ Citizen.CreateThread(function()
     end
 end)
 
-local ClosestTraphouse = nil
-local InsideTraphouse = false
+local ClosestTraphouse = 1
+local InsideTraphouse = true
 local CurrentTraphouse = nil
-local IsKeyHolder = false
 local InTraphouseRange = false
 
 Citizen.CreateThread(function()
@@ -104,9 +103,82 @@ RegisterNUICallback('EnterPincode', function(d)
         CurrentTraphouse = ClosestTraphouse
         InsideTraphouse = true
     else
-        QBCore.Functions.Notify('This Code Is Incorrect', 'error')
+        QBCore.Functions.Notify('Incorrect Code', 'error')
     end
 end)
+
+--  !!!!!!!!!!!!!!!!!!!!!!!!! BT TARGET SHIT Un-Comment if you would like to use it, I cant find a way to make it work in Config.lua lol  !!!!!!!!!!!!!!!!!!!!!!!!!
+
+--[[Citizen.CreateThread(function()
+    exports["bt-target"]:AddBoxZone("EnterTrap", vector3(636.49, 2786.20, 42.00), 0.9, 0.6, {
+        name="EnterTrap",
+        heading=91,
+        debugPoly=false,
+        minZ=41.79,
+        maxZ=42.99
+        }, {
+            options = {
+                {
+                    event = "qb-traphouse:client:EnterTraphouse",
+                    icon = "fas fa-door-closed",
+                    label = "Enter",
+                    job = {"all"},
+                },
+            },
+            distance = 1.5
+        })
+    end)
+
+Citizen.CreateThread(function()
+    exports["bt-target"]:AddBoxZone("LeaveTrap", vector3(1138.129, -3199.196, -39.66), 0.9, 0.6, {
+        name="LeaveTrap",
+        heading=91,
+        debugPoly=false,
+        minZ=-40.79,
+        maxZ=-37.99
+        }, {
+            options = {
+                {
+                    event = "qb-traphouse:client:LeaveTraphouse",
+                    icon = "fas fa-door-closed",
+                    label = "Leave",
+                    job = {"all"},
+                },
+            },
+            distance = 1.5
+        })
+    end)
+
+    Citizen.CreateThread(function()
+        exports["bt-target"]:AddBoxZone("OpenLaptop", vector3(1129.50, -3193.60, -40.65), 0.6, 0.6, {
+            name="OpenLaptop",
+            heading=91,
+            debugPoly=true,
+            minZ=-40.79,
+            maxZ=-38.99
+            }, {
+                options = {
+                    {
+                        event = "qb-traphouse:Laptop",
+                        icon = "far fa-sitemap",
+                        label = "Open Laptop",
+                        job = {"all"},
+                    },
+                },
+                distance = 1.5
+            })
+        end)
+
+RegisterNetEvent("qb-traphouse:Laptop")
+AddEventHandler("qb-traphouse:Laptop", function()
+    local data = Config.TrapHouses[ClosestTraphouse]
+    local TraphouseInventory = {}
+    TraphouseInventory.label = "Laptop-"..CurrentTraphouse
+    TraphouseInventory.items = data.inventory
+    TraphouseInventory.slots = 10
+    TraphouseInventory.maxweight = 100000
+    TriggerServerEvent("inventory:server:OpenInventory", "traphouse", CurrentTraphouse, TraphouseInventory)
+end)]]
 
 Citizen.CreateThread(function()
     while true do
@@ -119,9 +191,9 @@ Citizen.CreateThread(function()
             local data = Config.TrapHouses[ClosestTraphouse]
             if InsideTraphouse then
                 local ExitDistance = #(pos - vector3(1138.119, -3199.49, -39.66))
-                if ExitDistance < 20 then
+                if ExitDistance < 20 and Config.Marker == 1 then
                     inRange = true
-                    if ExitDistance < 1 then
+                    if ExitDistance < 1 and Config.Marker == 1 then
                         DrawText3Ds(1138.119, -3199.49, -39.66, '~b~E~w~ - Leave')
                         if IsControlJustPressed(0, 38) then
                             LeaveTraphouse(data)
@@ -196,7 +268,7 @@ Citizen.CreateThread(function()
                     inRange = true
                     if EnterDistance < 1 then
                         InTraphouseRange = true
-                    elseif  EnterDistance < 1.7 and Config.Marker == 1 then
+                    elseif  EnterDistance < 2.0 and Config.Marker == 1 then
                         DrawText3Ds(data.coords["enter"].x, data.coords["enter"].y, data.coords["enter"].z, '~b~E~w~ - Enter')
                         InTraphouseRange = true
                         if IsControlJustPressed(0, 38) then
@@ -243,16 +315,16 @@ Citizen.CreateThread(function()
                         end
                         if IsControlJustPressed(0,74) then
                             QBCore.Functions.Progressbar("laptop_open", "opening laptop", math.random(2000, 3000), false, true, {
-                                disableMovement = false,
+                                disableMovement = true,
                                 disableCarMovement = false,
                                 disableMouse = false,
                                 disableCombat = true,
                             }, {
-                            animDict = "mp_car_bomb",
-                            anim = "car_bomb_mechanic",
+                            animDict = "missheist_jewel@hacking",
+                            anim = "hack_loop",
                             flags = 16,
                             }, {}, {}, function() -- Done
-                                StopAnimTask(GetPlayerPed(-1), "mp_car_bomb", "car_bomb_mechanic", 1.0)
+                                StopAnimTask(GetPlayerPed(-1), "missheist_jewel@hacking", "hack_loop", 1.0)
                             local TraphouseInventory = {}
                             TraphouseInventory.label = "Laptop-"..CurrentTraphouse
                             TraphouseInventory.items = data.inventory
@@ -270,13 +342,13 @@ Citizen.CreateThread(function()
                                     disableMouse = false,
                                     disableCombat = true,
                                 }, {
-                                animDict = "mp_car_bomb",
-                                anim = "car_bomb_mechanic",
+                                animDict = "missheist_jewel@hacking",
+                                anim = "hack_loop",
                                 flags = 16,
                                 }, {}, {}, function() -- Done
                                     TriggerServerEvent("qb-traphouse:server:TakeMoney", CurrentTraphouse)
                                     TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
-                                    StopAnimTask(GetPlayerPed(-1), "mp_car_bomb", "car_bomb_mechanic", 1.0)
+                                    StopAnimTask(GetPlayerPed(-1), "missheist_jewel@hacking", "hack_loop", 1.0)
                                     collect = false                        
                                 end, function()
                                     QBCore.Functions.Notify("Canceled..", "error")
@@ -303,13 +375,28 @@ function EnterTraphouse()
         CurrentTraphouse = ClosestTraphouse
         InsideTraphouse = true
         --SetRainLevel(0.0)
-        TriggerEvent('qb-weathersync:client:DisableSync')
+        --TriggerEvent('qb-weathersync:client:DisableSync')
         print('Entered')
-        SetWeatherTypePersist('EXTRASUNNY')
-        SetWeatherTypeNow('EXTRASUNNY')
-        SetWeatherTypeNowPersist('EXTRASUNNY')
+        --SetWeatherTypePersist('EXTRASUNNY')
+        --SetWeatherTypeNow('EXTRASUNNY')
+        --SetWeatherTypeNowPersist('EXTRASUNNY')
         NetworkOverrideClockTime(23, 0, 0)
 end
+
+RegisterNetEvent('qb-traphouse:client:LeaveTraphouse')
+AddEventHandler('qb-traphouse:client:LeaveTraphouse', function()
+    local ped = PlayerPedId()
+    local data = Config.TrapHouses[ClosestTraphouse]
+    TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
+    DoScreenFadeOut(250)
+    Citizen.Wait(250)
+       -- TriggerEvent('qb-weathersync:client:EnableSync')
+        DoScreenFadeIn(250)
+        SetEntityCoords(ped, data.coords["enter"].x, data.coords["enter"].y, data.coords["enter"].z + 0.5)
+        SetEntityHeading(ped, data.coords["enter"].h)
+        CurrentTraphouse = nil
+        InsideTraphouse = false
+end)
 
 function LeaveTraphouse(data)
     local ped = PlayerPedId()

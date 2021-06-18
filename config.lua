@@ -1,7 +1,7 @@
 Config = Config or {}
 
 
---      0 is no marker only text command
+--      0 is no marker (best used with bt-target)
 --      1 is marker
 
 Config.Marker = 1
