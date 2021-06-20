@@ -12,8 +12,8 @@ Citizen.CreateThread(function()
     end
 end)
 
-local ClosestTraphouse = 1
-local InsideTraphouse = true
+local ClosestTraphouse = nil
+local InsideTraphouse = false
 local CurrentTraphouse = nil
 local InTraphouseRange = false
 
