@@ -16,6 +16,7 @@ local ClosestTraphouse = nil
 local InsideTraphouse = false
 local CurrentTraphouse = nil
 local InTraphouseRange = false
+local selling = false
 
 Citizen.CreateThread(function()
     while true do
@@ -209,16 +210,20 @@ Citizen.CreateThread(function()
 
                     -- I know the code looks fucking horrible but it works... idk how... but it does
 
-                        if data.money == 0 then
+                        if data.money == 0 and data.laptopmoney == 0 then
                             DrawText3Ds(data.coords["washer"].x, data.coords["washer"].y, data.coords["washer"].z + 0.2, '~b~H~w~ - Open Washer')
-                        end
-                        if data.money == 2 then
+                            selling = false
+                        elseif data.money == 2 and data.laptopmoney == 0 then
                             DrawText3Ds(data.coords["washer"].x, data.coords["washer"].y, data.coords["washer"].z + 0.1, '~b~ Washing...')
-                        end
-                        if data.money > 3 then 
+                            selling = true
+                        elseif data.money > 3 and data.laptopmoney == 0 then
                             DrawText3Ds(data.coords["washer"].x, data.coords["washer"].y, data.coords["washer"].z, '~b~E~w~ - Grab Stack of Cash (~g~$'..data.money..'~w~)')
+                            selling = true
+                        else
+                            DrawText3Ds(data.coords["washer"].x, data.coords["washer"].y, data.coords["washer"].z + 0.1, '~r~ Too much electricity being used')
+                            selling = true
                         end
-                        if IsControlJustPressed(0,74) then
+                        if IsControlJustPressed(0,74) and selling == false then
                             QBCore.Functions.Progressbar("bills_wash", "opening washer", math.random(2000, 3000), false, true, {
                                 disableMovement = false,
                                 disableCarMovement = false,
@@ -266,7 +271,7 @@ Citizen.CreateThread(function()
                 local EnterDistance = #(pos - vector3(data.coords["enter"].x, data.coords["enter"].y, data.coords["enter"].z))
                 if EnterDistance < 20 then
                     inRange = true
-                    if EnterDistance < 1 then
+                    if EnterDistance > 1 then
                         InTraphouseRange = true
                     elseif  EnterDistance < 2.0 and Config.Marker == 1 then
                         DrawText3Ds(data.coords["enter"].x, data.coords["enter"].y, data.coords["enter"].z, '~b~E~w~ - Enter')
@@ -304,16 +309,20 @@ Citizen.CreateThread(function()
                 if InteractDistance < 20 then
                     inRange = true
                     if InteractDistance < 1 then
-                        if data.laptopmoney == 0 then
+                        if data.laptopmoney == 0 and data.money == 0 then
                             DrawText3Ds(data.coords["laptop"].x, data.coords["laptop"].y, data.coords["laptop"].z + 0.2, '~b~H~w~ - Open Laptop')
-                        end
-                        if data.laptopmoney == 2 then
+                            selling = false
+                        elseif data.laptopmoney == 2 and data.money == 0 then
                             DrawText3Ds(data.coords["laptop"].x, data.coords["laptop"].y, data.coords["laptop"].z + 0.1, '~r~ Looking for buyer...')
-                        end
-                        if data.laptopmoney > 3 then 
+                            selling = true
+                        elseif data.laptopmoney > 3 and data.money == 0 then 
                             DrawText3Ds(data.coords["laptop"].x, data.coords["laptop"].y, data.coords["laptop"].z, '~b~E~w~ - Transfer Cash to Bank (~g~$'..data.laptopmoney..'~w~)')
+                            selling = true
+                        else
+                            DrawText3Ds(data.coords["laptop"].x, data.coords["laptop"].y, data.coords["laptop"].z + 0.1, '~r~ Too much electricity being used')
+                            selling = true
                         end
-                        if IsControlJustPressed(0,74) then
+                        if IsControlJustPressed(0,74) and selling == false then
                             QBCore.Functions.Progressbar("laptop_open", "opening laptop", math.random(2000, 3000), false, true, {
                                 disableMovement = true,
                                 disableCarMovement = false,
